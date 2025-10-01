@@ -51,7 +51,7 @@ span.logo {
     flex-direction: column;
     justify-content: space-between;
 }
-#sidebar .section {
+.section {
     width: 48px;
     height: 50px;
     box-sizing: border-box;
@@ -64,6 +64,12 @@ span.logo {
     background-color: #6f7178;
 }
 .section:hover div {
+    background-color: white;
+}
+.section[data-focus="1"] {
+    border-left-color: white;
+}
+.section[data-focus="1"] div {
     background-color: white;
 }
 
