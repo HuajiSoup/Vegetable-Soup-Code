@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./assets/index.css">
+    <link rel="stylesheet" href="./assets/index/index.css">
     <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
     <title>Vegetable Soup Code</title>
 </head>
@@ -12,6 +12,7 @@
         <span class="logo"></span>
         <p>Vegetable Soup Code</p>
     </div>
+
     <div id="main">
         <div id="sidebar">
             <div class="up-box">
@@ -27,10 +28,29 @@
                 <div class="section" id="account" data-ico="person"></div>
             </div>
         </div>
-        <div id="func"></div>
+
+        <div id="func">
+            <div class="panel" id="panel-file" data-focus="1">
+                <div class="title">资源管理器</div>
+            </div>
+            <div class="panel" id="panel-search">
+                <div class="title">搜索</div>
+            </div>
+            <div class="panel" id="panel-git">
+                <div class="title">源代码管理</div>
+            </div>
+            <div class="panel" id="panel-run">
+                <div class="title">运行和调试</div>
+            </div>
+            <div class="panel" id="panel-ext">
+                <div class="title">扩展</div>
+            </div>
+        </div>
+
         <div id="editor"></div>
     </div>
+
     <div id="footer"></div>
 </body>
 </html>
-<script type="module" src="./assets/index.js"></script>
+<script type="module" src="./assets/index/index.js"></script>

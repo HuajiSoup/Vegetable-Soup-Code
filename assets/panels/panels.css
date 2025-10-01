@@ -1,0 +1,21 @@
+.panel {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-family: sans-serif;
+}
+.panel[data-focus="1"] {
+    display: flex;
+    flex-direction: column;
+}
+
+.panel > .title {
+    box-sizing: border-box;
+    width: 100%;
+    height: 40px;
+    background-color: #22252a;
+    padding: 10px 20px;
+    font-size: small;
+    color: #adb2be;
+}
