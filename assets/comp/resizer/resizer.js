@@ -1,13 +1,4 @@
 window.pressing = false;
-window.pressingFunction = null;
-
-document.addEventListener("mouseup", () => {
-    if (window.pressing) {
-        window.pressing = false;
-        document.removeEventListener("mousemove", window.pressingFunction);
-        window.pressingFunction = null;
-    }
-})
 
 function addResizer(elem, horizonal = true, minkeep = 0) {
     let resizer = document.createElement("div");
@@ -18,20 +9,31 @@ function addResizer(elem, horizonal = true, minkeep = 0) {
     if (horizonal) {
         resizer.classList.add("hrz");
         moveHandler = (e) => {
-            elem.style.width = e.clientX - elem.offsetLeft + "px";
+            let _width = e.clientX - elem.offsetLeft;
+            elem.style.width = (_width > minkeep/2) ? Math.max(minkeep, _width) + "px" : 0;
         };
     } else {
         resizer.classList.add("vtc");
         moveHandler = (e) => {
-            elem.style.height = e.clientY - elem.offsetTop + "px";
+            let _height = e.clientY - elem.offsetTop;
+            elem.style.height = (_height > minkeep/2) ? Math.max(minkeep, _height) + "px" : 0;
         };
     }
+
+    let upHandler = () => {
+        console.log("now up");
+        if (window.pressing) {
+            window.pressing = false;
+            document.removeEventListener("mousemove", moveHandler);
+            document.removeEventListener("mouseup", upHandler);
+        }
+    };
 
     resizer.addEventListener("mousedown", () => {
         if (!window.pressing) {
             window.pressing = true;
-            window.pressingFunction = moveHandler;
             document.addEventListener("mousemove", moveHandler);
+            document.addEventListener("mouseup", upHandler); // `once` > ES7
         }
     });
 

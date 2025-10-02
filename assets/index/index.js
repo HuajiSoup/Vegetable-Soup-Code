@@ -23,7 +23,7 @@ function initSectionIcon() {
 }
 
 function initResizer() {
-    addResizer(document.querySelector("#func"));
+    addResizer(document.querySelector("#func"), true, 200);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
