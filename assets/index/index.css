@@ -92,5 +92,6 @@ span.logo {
 }
 #main #editor {
     flex-grow: 1;
+    min-width: 200px; /* change */
     height: 100%;
 }
