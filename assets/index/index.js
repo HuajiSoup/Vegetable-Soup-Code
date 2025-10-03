@@ -1,4 +1,5 @@
 import { addResizer } from "../comp/resizer/resizer.js";
+import { initPanelCards } from "../panels/panels.js";
 
 function initSectionIcon() {
     document.querySelectorAll("#sidebar .section").forEach(sec => {
@@ -29,4 +30,5 @@ function initResizer() {
 document.addEventListener("DOMContentLoaded", () => {
     initSectionIcon();
     initResizer();
+    initPanelCards();
 });

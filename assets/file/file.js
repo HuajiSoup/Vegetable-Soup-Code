@@ -16,7 +16,7 @@ class File extends FileNode {
     ext;
     constructor(parent, name) {
         super(parent, name);
-        let extAt = getExtName(name);
+        this.ext = getExtName(name);
     }
     rename(name) {
         this.name = name;
