@@ -1,18 +1,24 @@
-class FileNode {
+class PathNode {
     parent;
     name;
     constructor(parent, name) {
         this.parent = parent;
         this.name = name;
+        if (parent instanceof DirNode) {
+            parent.addChild(this);
+        }
     }
     rename(name) {
         this.name = name;
     }
+    getFullPath() {
+        return this.parent
+            ? `${this.parent.getFullPath()}/${this.name}`
+            : ".";
+    }
 }
 
-class File extends FileNode {
-    parent;
-    name;
+class FileNode extends PathNode {
     ext;
     constructor(parent, name) {
         super(parent, name);
@@ -24,22 +30,21 @@ class File extends FileNode {
     }
 }
 
-class Directory extends FileNode {
-    parent;
-    name;
+class DirNode extends PathNode {
     children;
     constructor(parent, name) {
         super(parent, name);
         this.children = new Array(0);
     }
-    removeChild(fileNode) {
-        this.children.push(fileNode);
+    addChild(pathnode) {
+        this.children.push(pathnode);
+        pathnode.parent = this;
     }
 }
 
-function getExtName(filename) {
-    extAt = filename.lastIndexOf(".");
+export function getExtName(filename) {
+    let extAt = filename.lastIndexOf(".");
     return extAt >= 0 ? filename.slice(extAt+1) : undefined;
 }
 
-export { File, Directory };
+export { FileNode, DirNode };

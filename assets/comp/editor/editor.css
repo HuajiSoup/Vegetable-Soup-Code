@@ -27,7 +27,6 @@
 
 .editor .text-box {
     width: 100%;
-    /* height: max-content; */
     flex-grow: 1;
     overflow: hidden scroll;
     display: flex;

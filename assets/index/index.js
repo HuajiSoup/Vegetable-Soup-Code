@@ -1,6 +1,9 @@
 import { addResizer } from "../comp/resizer/resizer.js";
 import { initPanelCards } from "../panels/panels.js";
 
+import { FileNode, DirNode } from "../pathnode/pathnode.js";
+import { applyFileTree } from "../comp/filetree/filetree.js";
+
 function initSectionIcon() {
     document.querySelectorAll("#sidebar .section").forEach(sec => {
         // css
@@ -27,8 +30,25 @@ function initResizer() {
     addResizer(document.querySelector("#func"), true, 200);
 }
 
+function initFileTree() {
+    //
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     initSectionIcon();
     initResizer();
     initPanelCards();
+
+    let fileTree = document.querySelector("#card-filetree .card");
+
+    // test
+    let root = new DirNode(undefined, "");
+    let dirA = new DirNode(root, "dirA");
+    let fileA = new FileNode(root, "fileA.txt")
+    let dirB = new DirNode(root, "dirB");
+    let fileB = new FileNode(dirB, "fileB.cmd");
+    let dirC = new DirNode(dirB, "dirC");
+    
+    applyFileTree(root, fileTree);
+    
 });
