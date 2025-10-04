@@ -21,7 +21,6 @@ function addResizer(elem, horizonal = true, minkeep = 0) {
     }
 
     let upHandler = () => {
-        console.log("now up");
         if (window.pressing) {
             window.pressing = false;
             document.removeEventListener("mousemove", moveHandler);

@@ -1,15 +1,22 @@
 import { FileNode, DirNode } from "../../pathnode/pathnode.js";
+import { create } from "../../common.js";
 
 function applyFileTree(pathnode, box, depth=0) {
     if (depth == 0) {
         // `root` dir is invisible
         box.innerHTML = "";
     } else {
-        let newDiv = document.createElement("div");
-        newDiv.className = "node";
+        let newDiv = create("div", "node");
         newDiv.innerHTML = pathnode.name;
-        newDiv.style.paddingLeft = `${20 * depth}px`;
         newDiv.setAttribute("data-filepath", pathnode.getFullPath());
+        if (pathnode instanceof DirNode) {
+            newDiv.style.paddingLeft = `${12 * depth - 12}px`;
+            newDiv.setAttribute("data-open", "0");
+            newDiv.insertBefore(create("span", "arrow"), newDiv.firstChild);
+        } else {
+            newDiv.style.paddingLeft = `${12 * depth}px`;
+        }
+
         box.appendChild(newDiv);
     }
 

@@ -6,7 +6,6 @@
     top: 0;
     font-family: sans-serif;
     font-size: small;
-    color: #adb2be;
 }
 .panel[data-focus="1"] {
     display: flex;
@@ -41,8 +40,8 @@
     cursor: pointer;
 }
 .card-box .card-toggle span.arrow {
-    width: 15px;
-    height: 15px;
+    width: 12px;
+    height: 12px;
     background: url("../../res/icon/arrow_right.svg") center / cover no-repeat;
     transform: rotate(0deg);
     /* transition: transform 200ms ease-out; */

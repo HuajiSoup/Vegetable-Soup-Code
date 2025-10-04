@@ -23,6 +23,46 @@
     background-color: #22252a;
     display: flex;
     flex-direction: row;
+
+    font-family: sans-serif;
+}
+.files-list .file {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: max-content;
+    background-color: #22252a;
+
+    box-sizing: border-box;
+    padding: 0 5px;
+    border-width: 0 1px 0px 1px;
+    border-color: #6e7073 black;
+    border-style: solid;
+}
+.files-list .file span.icon {
+    width: 16px;
+    height: 16px;
+    margin: 4px;
+    background: url("../../../res/ext/python.svg") center / cover no-repeat;
+}
+.files-list .file span.exit {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    margin: 4px;
+    background-color: transparent;
+    visibility: hidden;
+    background: url("../../../res/icon/close.svg") 80% / cover no-repeat;
+}
+
+.files-list .file:hover {
+    background-color: #343841;
+}
+.files-list .file:hover span.exit {
+    visibility: visible;
+}
+.files-list .file span.exit:hover {
+    background-color: #3a3e46;
 }
 
 .editor .text-box {
@@ -35,8 +75,10 @@
 .text-box .line-num {
     width: 75px;
     height: max-content;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
+    /* box-shadow: 3px 0 3px black; */
 }
 .text-box textarea {
     appearance: none;
@@ -53,6 +95,6 @@
     overflow: visible;
     flex-grow: 1;
     font-size: large;
+    font-family: monospace;
     line-height: 20px;
-    color: #adb2be;
 }

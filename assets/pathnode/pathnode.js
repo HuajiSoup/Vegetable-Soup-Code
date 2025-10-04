@@ -20,9 +20,11 @@ class PathNode {
 
 class FileNode extends PathNode {
     ext;
+    content;
     constructor(parent, name) {
         super(parent, name);
         this.ext = getExtName(name);
+        this.content = "";
     }
     rename(name) {
         this.name = name;
@@ -39,6 +41,16 @@ class DirNode extends PathNode {
     addChild(pathnode) {
         this.children.push(pathnode);
         pathnode.parent = this;
+
+        this.children.sort((childA, childB) => {
+            if (childA instanceof DirNode && childB instanceof FileNode) {
+                return -1;
+            } else if (childA instanceof FileNode && childB instanceof DirNode) {
+                return 1;
+            } else {
+                return childA.name <= childB.name ? -1 : 1;
+            }
+        });
     }
 }
 
