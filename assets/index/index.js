@@ -1,9 +1,10 @@
 import { $, $s } from "../common.js";
+import { hljs } from "../lib/highlight.js";
 
 import { addResizer } from "../comp/resizer/resizer.js";
 import { initPanelCards } from "../panels/panels.js";
 
-import { FileNode, DirNode } from "../pathnode/pathnode.js";
+import { FileNode, DirNode, getFileDictFromTree } from "../pathnode/pathnode.js";
 import { applyFileTree } from "../comp/filetree/filetree.js";
 
 function initSectionIcon() {
@@ -32,27 +33,36 @@ function initResizer() {
     addResizer($("#func"), true, 200);
 }
 
-function initFileTree() {
-    $("#card-filetree .card").addEventListener("click", () => {
-        let selected = $("#card-filetree .node:hover");
-    });
-}
-
 document.addEventListener("DOMContentLoaded", () => {
     initSectionIcon();
     initResizer();
     initPanelCards();
-
-    let fileTree = $("#card-filetree .card");
-
-    // test
+    
     let root = new DirNode(undefined, "");
+    
+    // test
     let dirA = new DirNode(root, "dirA");
-    let fileA = new FileNode(root, "fileA.txt")
+    let fileA = new FileNode(root, "fileA.txt");
     let dirB = new DirNode(root, "dirB");
     let fileB = new FileNode(dirB, "fileB.cmd");
     let dirC = new DirNode(dirB, "dirC");
+    let fileC = new FileNode(dirC, "fileOOO.kl");
+    // test
+
+    applyFileTree(root, document.querySelector("#card-filetree .card"));
     
-    applyFileTree(root, fileTree);
-    
+    window.fileDict = getFileDictFromTree(root);
+    $("#card-filetree .card").addEventListener("click", () => {
+        let selected = $("#card-filetree .node:hover");
+        if (selected) {
+            let file = window.fileDict[selected.getAttribute("data-filepath")];
+            if (file instanceof DirNode) {
+                selected.setAttribute("data-open", 
+                    selected.getAttribute("data-open") == 1 ? 0 : 1
+                );
+            } else {
+                // open file to current editor
+            }
+        }
+    });
 });

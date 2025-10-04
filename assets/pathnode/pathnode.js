@@ -52,11 +52,29 @@ class DirNode extends PathNode {
             }
         });
     }
+    walkEach(callback) {
+        callback(this);
+        for (const child of this.children) {
+            if (child instanceof DirNode) {
+                child.walkEach(callback);
+            } else {
+                callback(child);
+            }
+        }
+    }
 }
 
-export function getExtName(filename) {
+function getExtName(filename) {
     let extAt = filename.lastIndexOf(".");
-    return extAt >= 0 ? filename.slice(extAt+1) : undefined;
+    return extAt >= 0 ? filename.slice(extAt + 1) : "";
+}
+function getFileDictFromTree(node) {
+    let dict = {};
+    node.walkEach((pathnode) => {
+        dict[pathnode.getFullPath()] = pathnode;
+    });
+
+    return dict;
 }
 
-export { FileNode, DirNode };
+export { DirNode, FileNode, getFileDictFromTree };

@@ -1,7 +1,7 @@
 .resizer {
     background-color: transparent;
     transition: background-color 200ms ease-in;
-    z-index: +999;
+    z-index: +1024;
 }
 .resizer:hover {
     background-color: #8888;
