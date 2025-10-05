@@ -1,9 +1,37 @@
 import { create, hljs } from "../../common.js";
 
-function addEditor(dest, horizonal = true) {
+function createEditor() {
+    let editor = create("div", "editor");
+    let filesList = create("div", "files-list");
+    let listContainer = create("div", "container");
+    listContainer.addEventListener("click", (e) => {
+        let selected = e.target.closest(".file");
+        editorFocusOn(editor, selected);
+    });
+    
+    filesList.appendChild(listContainer);
+    editor.appendChild(filesList);
+    return editor;
+}
+
+function splitEditor(dest, horizonal = true) {
     let editor = document.createElement("div");
     editor.classList.add("editor");
     //
+}
+
+function editorFocusOn(editor, selected) {
+    let filename = selected.getAttribute("data-file");
+
+    editor.querySelector(".text-box[data-focus='1']")?.
+        setAttribute("data-focus", 0);
+    editor.querySelector(`.text-box[data-file="${filename}"]`).
+        setAttribute("data-focus", 1);
+
+    editor.querySelector(".files-list .file[data-focus='1']")?.
+        setAttribute("data-focus", 0);
+    editor.querySelector(`.files-list .file[data-file="${filename}"]`).
+        setAttribute("data-focus", 1);
 }
 
 function getTextareaInputFunc(textArea, codeArea, linebar) {
@@ -50,7 +78,7 @@ function openFile(editor, filepath) {
     let divFile = create("div", "file", undefined, 
         {
             "data-file" : filepath,
-            "data-open" : false,
+            "data-focus" : false,
         }
     );
     let divIcon = create("span", "icon");
@@ -71,7 +99,7 @@ function openFile(editor, filepath) {
     let divText = create("div", "text-box", undefined, 
         {
             "data-file" : filepath,
-            "data-open" : false,
+            "data-focus" : false,
         }
     );
     let divTextContainer = create("div", "container");
@@ -103,6 +131,7 @@ function openFile(editor, filepath) {
     textArea.value = content;
     oninput();
     onscroll();
+    editorFocusOn(editor, divFile);
 }
 
-export { openFile };
+export { createEditor, openFile };

@@ -18,6 +18,7 @@
     height: 100%;
     overflow: hidden;
 }
+
 .editor .files-list {
     width: 100%;
     height: 40px;
@@ -74,12 +75,19 @@
 .files-list .file span.exit:hover {
     background-color: #3a3e46;
 }
+.files-list .file[data-focus="1"] {
+    background-color: #292c33;
+    border-bottom-width: 2px;
+}
 
 .editor .text-box {
     width: 100%;
     height: 0;
     flex-grow: 1;
     overflow-x: hidden;
+}
+.editor .text-box[data-focus="0"] {
+    display: none;
 }
 .text-box .container {
     width: 100%;
@@ -93,6 +101,7 @@
     display: flex;
     flex-direction: column;
     /* box-shadow: 3px 0 3px black; */
+    cursor: default;
 }
 .line-bar .line {
     text-align: center;

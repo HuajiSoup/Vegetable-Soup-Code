@@ -3,7 +3,7 @@ import { hljs } from "../common.js";
 
 import { addResizer } from "../comp/resizer/resizer.js";
 import { initPanelCards } from "../panels/panels.js";
-import { openFile } from "../comp/editor/editor.js";
+import { openFile, createEditor } from "../comp/editor/editor.js";
 
 import { FileNode, DirNode, getFileDictFromTree } from "../pathnode/pathnode.js";
 import { applyFileTree } from "../comp/filetree/filetree.js";
@@ -55,8 +55,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // initFiletree
     window.fileDict = getFileDictFromTree(root);
     $("#card-filetree .card").addEventListener("click", () => {
-        let selected = $("#card-filetree .node:hover");
-        if (selected) {
+        let selected;
+        if (selected = $("#card-filetree .node:hover")) {
             let filepath = selected.getAttribute("data-filepath");
             let file = window.fileDict[filepath];
 
@@ -66,7 +66,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
             } else {
                 // open file to current editor
-                openFile($(".editor"), filepath);
+                let destEditor;
+                if (destEditor = $(".editor[data-focus='1']")) {
+                    openFile(destEditor, filepath);
+                } else {
+                    destEditor = createEditor();
+                    destEditor.setAttribute("data-focus", "1");
+                    openFile(destEditor, filepath);
+                    $("#editor").appendChild(destEditor);
+                }
             }
         }
     });
