@@ -6,14 +6,13 @@
 * {
     margin: 0;
     color: #adb2be;
-    font-family: sans-serif;
 }
 .hidden {
     display: none;
 }
 
 textarea::selection {
-    background-color: #444b;
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 body {
@@ -102,6 +101,5 @@ span.logo {
 }
 #main #editor {
     flex-grow: 1;
-    min-width: 200px; /* change */
     height: 100%;
 }

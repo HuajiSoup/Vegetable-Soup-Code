@@ -1,8 +1,9 @@
 import { $, $s } from "../common.js";
-import { hljs } from "../lib/highlight.js";
+import { hljs } from "../common.js";
 
 import { addResizer } from "../comp/resizer/resizer.js";
 import { initPanelCards } from "../panels/panels.js";
+import { openFile } from "../comp/editor/editor.js";
 
 import { FileNode, DirNode, getFileDictFromTree } from "../pathnode/pathnode.js";
 import { applyFileTree } from "../comp/filetree/filetree.js";
@@ -47,22 +48,29 @@ document.addEventListener("DOMContentLoaded", () => {
     let fileB = new FileNode(dirB, "fileB.cmd");
     let dirC = new DirNode(dirB, "dirC");
     let fileC = new FileNode(dirC, "fileOOO.kl");
+    fileA.content = '#include <stdio.h>\n\nint main(void) {\n  prinf("Hello world im gay!!!!");\n}';
+    applyFileTree(root, document.querySelector("#card-filetree .card"));
     // test
 
-    applyFileTree(root, document.querySelector("#card-filetree .card"));
-    
+    // initFiletree
     window.fileDict = getFileDictFromTree(root);
     $("#card-filetree .card").addEventListener("click", () => {
         let selected = $("#card-filetree .node:hover");
         if (selected) {
-            let file = window.fileDict[selected.getAttribute("data-filepath")];
+            let filepath = selected.getAttribute("data-filepath");
+            let file = window.fileDict[filepath];
+
             if (file instanceof DirNode) {
                 selected.setAttribute("data-open", 
                     selected.getAttribute("data-open") == 1 ? 0 : 1
                 );
             } else {
                 // open file to current editor
+                openFile($(".editor"), filepath);
             }
         }
     });
+
+    // initEditor
+    // $("#editor")
 });
