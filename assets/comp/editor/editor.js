@@ -1,36 +1,76 @@
-import { create, hljs } from "../../common.js";
+import { create, hljs, $, $s } from "../../common.js";
 
 function createEditor() {
     let editor = create("div", "editor");
     let filesList = create("div", "files-list");
     let listContainer = create("div", "container");
+    let options = create("div", "options");
+    let optionSplit = create("span", "split");
     listContainer.addEventListener("click", (e) => {
+        if (e.target.classList.contains("exit")) return;
         let selected = e.target.closest(".file");
-        editorFocusOn(editor, selected);
+        editorFocusOnFile(editor, selected);
+    });
+    optionSplit.addEventListener("click", () => {
+        splitEditor(editor, true);
     });
     
+    options.appendChild(optionSplit);
     filesList.appendChild(listContainer);
+    filesList.appendChild(options);
     editor.appendChild(filesList);
     return editor;
 }
 
 function splitEditor(dest, horizonal = true) {
-    let editor = document.createElement("div");
-    editor.classList.add("editor");
-    //
+    let editorParent = dest.parentNode;
+    // if direction matches: half-cut & copy
+    // else: create new editor-box
+    let clone;
+    if (horizonal) {
+        clone = createEditor();
+        editorOpenFile(clone, dest.querySelector(".file[data-focus='1']").getAttribute("data-filepath"));
+        dest.style.width = clone.style.width = dest.clientWidth / 2 + "px";
+
+        if (editorParent.classList.contains("hrz")) {
+            dest.after(clone);
+        } else {
+            let newBox = create("div", "editor-box hrz");
+            newBox.appendChild(editorParent.replaceChild(newBox, dest));
+            newBox.appendChild(clone);
+        }
+    } else {
+        clone = createEditor();
+        editorOpenFile(clone, dest.querySelector(".file[data-focus='1']").getAttribute("data-filepath"));
+        dest.style.height = clone.style.height = dest.clientHeight / 2 + "px";
+
+        if (editorParent.classList.contains("vtc")) {
+            editorParent.appendChild(clone);
+        } else {
+            let newBox = create("div", "editor-box vtc");
+            newBox.appendChild(editorParent.replaceChild(newBox, dest));
+            newBox.appendChild(clone);
+        }
+    }
 }
 
-function editorFocusOn(editor, selected) {
-    let filename = selected.getAttribute("data-file");
+function focusOnEditor(selected) {
+    $s("#editor .editor").forEach(editor => {
+        editor.setAttribute("data-focus", editor == selected ? "1" : "0");
+    });
+}
+
+function editorFocusOnFile(editor, selected) {
+    let filename = selected.getAttribute("data-filepath");
 
     editor.querySelector(".text-box[data-focus='1']")?.
         setAttribute("data-focus", 0);
-    editor.querySelector(`.text-box[data-file="${filename}"]`).
+    editor.querySelector(`.text-box[data-filepath="${filename}"]`)?.
         setAttribute("data-focus", 1);
 
     editor.querySelector(".files-list .file[data-focus='1']")?.
         setAttribute("data-focus", 0);
-    editor.querySelector(`.files-list .file[data-file="${filename}"]`).
+    editor.querySelector(`.files-list .file[data-filepath="${filename}"]`)?.
         setAttribute("data-focus", 1);
 }
 
@@ -69,7 +109,7 @@ function setLineBar(linebar, line) {
     }
 }
 
-function openFile(editor, filepath) {
+function editorOpenFile(editor, filepath) {
     let file = window.fileDict[filepath];
     let content = file.content;
     let line = content.split("\n").length;
@@ -77,29 +117,19 @@ function openFile(editor, filepath) {
     // file-list
     let divFile = create("div", "file", undefined, 
         {
-            "data-file" : filepath,
-            "data-focus" : false,
+            "data-filepath" : filepath,
+            "data-focus" : 0,
         }
     );
     let divIcon = create("span", "icon");
     let divExit = create("span", "exit");
-
     divIcon.style.backgroundImage = `url("./res/ext/${file.ext}.svg")`;
-    divExit.addEventListener("click", () => {
-        //
-    }, { once : true });
-
-    divFile.appendChild(divIcon);
-    divFile.innerHTML += file.name;
-    divFile.appendChild(divExit);
-    editor.querySelector(".files-list .container").appendChild(divFile);
-
 
     // text-box
     let divText = create("div", "text-box", undefined, 
         {
-            "data-file" : filepath,
-            "data-focus" : false,
+            "data-filepath" : filepath,
+            "data-focus" : 0,
         }
     );
     let divTextContainer = create("div", "container");
@@ -114,12 +144,35 @@ function openFile(editor, filepath) {
     let codePre = create("pre");
     let code = create("code");
     
+    divExit.addEventListener("click", () => {
+        divFile.remove();
+        divText.remove();
+
+        if (!editor.querySelector(".file")) {
+            // if delete the last file, delete the whole editor;
+            let editorBox = editor.parentNode;
+            editor.remove();
+
+            let filesLeft = editorBox.querySelectorAll(".editor").length;
+            if (filesLeft == 1) {
+                editorBox.parentNode.replaceChild(editorBox.firstChild, editorBox);
+            }
+            focusOnEditor($("#editor .editor"));
+        } else {
+            editorFocusOnFile(editor, editor.querySelector(".file"));
+        }
+    }, { once : true });
     let oninput = getTextareaInputFunc(textArea, code, linebar);
     let onscroll = () => { code.scrollLeft = textArea.scrollLeft };
     textArea.oninput = oninput;
     textArea.onscroll = onscroll;
     setLineBar(linebar, line);
     
+    divFile.appendChild(divIcon);
+    divFile.innerHTML += file.name;
+    divFile.appendChild(divExit);
+    editor.querySelector(".files-list .container").appendChild(divFile);
+
     divTextContainer.appendChild(linebar);
     codeLayer.appendChild(textArea);
     codePre.appendChild(code);
@@ -131,7 +184,7 @@ function openFile(editor, filepath) {
     textArea.value = content;
     oninput();
     onscroll();
-    editorFocusOn(editor, divFile);
+    editorFocusOnFile(editor, divFile);
 }
 
-export { createEditor, openFile };
+export { createEditor, editorOpenFile, editorFocusOnFile, focusOnEditor };

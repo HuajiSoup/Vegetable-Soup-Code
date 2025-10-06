@@ -1,6 +1,10 @@
 window.pressing = false;
 
 function addResizer(elem, horizonal = true, minkeep = 0) {
+    // a resizer controls this elem and next elem
+    let sibling;
+    if (!(sibling = elem.nextElementSibling)) return;
+
     let resizer = document.createElement("div");
     resizer.classList.add("resizer");
     resizer.setAttribute("data-dragging", "0");
@@ -9,14 +13,25 @@ function addResizer(elem, horizonal = true, minkeep = 0) {
     if (horizonal) {
         resizer.classList.add("hrz");
         moveHandler = (e) => {
-            let _width = e.clientX - elem.offsetLeft;
-            elem.style.width = (_width > minkeep/2) ? Math.max(minkeep, _width) + "px" : 0;
+            let total = elem.clientWidth + sibling.clientWidth;
+            let widthElem, widthSibling;
+            widthElem = Math.min(e.clientX - elem.offsetLeft, total);
+            widthElem = (widthElem > minkeep/2) ? Math.max(widthElem, minkeep) : 0;
+            widthSibling = total - widthElem;
+
+            elem.style.width = widthElem + "px";
+            sibling.style.width = widthSibling + "px";
         };
     } else {
         resizer.classList.add("vtc");
         moveHandler = (e) => {
-            let _height = e.clientY - elem.offsetTop;
-            elem.style.height = (_height > minkeep/2) ? Math.max(minkeep, _height) + "px" : 0;
+            let total = elem.clientHeight + sibling.clientHeight;
+            let heightElem, heightSibling;
+            heightElem = Math.min(e.clientY - elem.offsetTop, total);
+            heightElem = (heightElem > minkeep/2) ? Math.max(heightElem, minkeep) : 0;
+
+            elem.style.height = heightElem + "px";
+            sibling.style.height = heightSibling + "px";
         };
     }
 

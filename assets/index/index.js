@@ -1,9 +1,9 @@
-import { $, $s } from "../common.js";
+import { $, $s, create } from "../common.js";
 import { hljs } from "../common.js";
 
 import { addResizer } from "../comp/resizer/resizer.js";
 import { initPanelCards } from "../panels/panels.js";
-import { openFile, createEditor } from "../comp/editor/editor.js";
+import { createEditor, editorOpenFile, editorFocusOnFile, focusOnEditor } from "../comp/editor/editor.js";
 
 import { FileNode, DirNode, getFileDictFromTree } from "../pathnode/pathnode.js";
 import { applyFileTree } from "../comp/filetree/filetree.js";
@@ -68,11 +68,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 // open file to current editor
                 let destEditor;
                 if (destEditor = $(".editor[data-focus='1']")) {
-                    openFile(destEditor, filepath);
+                    // open file & de-duplication
+                    let existed = destEditor.querySelector(`.file[data-filepath="${filepath}"]`);
+                    if (existed) {
+                        editorFocusOnFile(destEditor, existed);
+                    } else {
+                        editorOpenFile(destEditor, filepath);
+                    }
                 } else {
                     destEditor = createEditor();
                     destEditor.setAttribute("data-focus", "1");
-                    openFile(destEditor, filepath);
+                    editorOpenFile(destEditor, filepath);
                     $("#editor").appendChild(destEditor);
                 }
             }
@@ -80,5 +86,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // initEditor
-    // $("#editor")
+    $("#editor").addEventListener("click", (e) => {
+        let selected = e.target.closest(".editor");
+        if (!selected) return; // it happens when close a file
+        focusOnEditor(selected);
+    });
 });

@@ -104,6 +104,7 @@ span.logo {
     overflow-x: hidden;
 }
 #main #editor {
-    flex-grow: 1;
+    /* flex-grow: 1; TO ABSOLUTIFY */
+    width: calc(100% - 298px);
     height: 100%;
 }
