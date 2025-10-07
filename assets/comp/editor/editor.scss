@@ -103,10 +103,15 @@
                 width: 20px;
                 height: 20px;
                 background: url("../../../res/icon/split.svg") center / cover no-repeat;
+                background-color: transparent;
+
+                &:hover {
+                    background-color: rgba(0, 0, 0, 0.267);
+                }
             }
         }
     }
-    .text-box {
+    .textbox {
         width: 100%;
         height: 0;
         flex-grow: 1;
@@ -145,37 +150,11 @@
             
                 position: relative;
 
-                textarea {
-                    appearance: none;
-                    -webkit-appearance: none;
-                    -moz-appearance: none;
-                    border: none;
-                    padding: 0;
-                    outline: none;
-                    background: none;
-                    resize: none;
-                    white-space: pre;
-                
-                    min-width: 100%;
-                    width: max-content;
-                    min-height: 100%;
-                    font-size: 1rem;
-                    font-family: monospace;
-                    line-height: 1.3rem;
-                    position: absolute;
-                    left: 0;
-                    top: 0;
-                
-                    z-index: +1;
-                    color: transparent;
-                    caret-color: #6887f7;
-                    overflow: hidden;
-                }
-
-                pre code {
+                code {
                     margin: 0;
                     padding: 0;
                     width: 100%;
+                    min-width: 100%;
                     min-height: 100%;
                     position: absolute;
                     left: 0;
@@ -185,6 +164,25 @@
                     font-family: monospace;
                     line-height: 1.3rem;
                     overflow: hidden;
+                }
+
+                textarea {
+                    @extend code;
+
+                    appearance: none;
+                    -webkit-appearance: none;
+                    -moz-appearance: none;
+                    border: none;
+                    outline: none;
+                    background: none;
+                    resize: none;
+                    white-space: pre;
+                
+                    // hide <textarea>
+                    z-index: +1;
+                    color: transparent;
+                    caret-color: #6887f7;
+                    overflow: auto hidden;
                 }
             }
         }

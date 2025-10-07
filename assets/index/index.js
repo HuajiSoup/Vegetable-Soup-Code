@@ -6,7 +6,7 @@ import { createEditor, editorOpenFile, editorFocusOnFile, focusOnEditor } from "
 
 import { FileNode, DirNode, getFileDictFromTree, setNodeParent, copyFile } from "../pathnode/pathnode.js";
 import { applyFileTree } from "../comp/filetree/filetree.js";
-import { closeContextMenu, showContextMenu, createContextMenu} from "../comp/menu/menu.js";
+import { closeContextMenu, showContextMenu, createContextMenu} from "../comp/contextmenu/menu.js";
 
 globalThis.pressing = false;
 globalThis.fileDict = {};

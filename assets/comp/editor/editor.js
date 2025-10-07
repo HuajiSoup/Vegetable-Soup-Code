@@ -63,9 +63,9 @@ function focusOnEditor(selected) {
 function editorFocusOnFile(editor, selected) {
     let filename = selected.getAttribute("data-filepath");
 
-    editor.querySelector(".text-box[data-focus='1']")?.
+    editor.querySelector(".textbox[data-focus='1']")?.
         setAttribute("data-focus", 0);
-    editor.querySelector(`.text-box[data-filepath="${filename}"]`)?.
+    editor.querySelector(`.textbox[data-filepath="${filename}"]`)?.
         setAttribute("data-focus", 1);
 
     editor.querySelector(".files-list .file[data-focus='1']")?.
@@ -125,8 +125,8 @@ function editorOpenFile(editor, filepath) {
     let divExit = create("span", "exit");
     divIcon.style.backgroundImage = `url("./res/ext/${file.ext}.svg")`;
 
-    // text-box
-    let divText = create("div", "text-box", undefined, 
+    // textbox
+    let divText = create("div", "textbox", undefined, 
         {
             "data-filepath" : filepath,
             "data-focus" : 0,
