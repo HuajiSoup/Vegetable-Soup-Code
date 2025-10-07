@@ -110,7 +110,7 @@ function setLineBar(linebar, line) {
 }
 
 function editorOpenFile(editor, filepath) {
-    let file = window.fileDict[filepath];
+    let file = globalThis.fileDict[filepath];
     let content = file.content;
     let line = content.split("\n").length;
 

@@ -1,4 +1,4 @@
-window.pressing = false;
+globalThis.pressing = false;
 
 function addResizer(elem, horizonal = true, minkeep = 0) {
     // a resizer controls this elem and next elem
@@ -36,16 +36,16 @@ function addResizer(elem, horizonal = true, minkeep = 0) {
     }
 
     let upHandler = () => {
-        if (window.pressing) {
-            window.pressing = false;
+        if (globalThis.pressing) {
+            globalThis.pressing = false;
             document.removeEventListener("mousemove", moveHandler);
             document.removeEventListener("mouseup", upHandler);
         }
     };
 
     resizer.addEventListener("mousedown", () => {
-        if (!window.pressing) {
-            window.pressing = true;
+        if (!globalThis.pressing) {
+            globalThis.pressing = true;
             document.addEventListener("mousemove", moveHandler);
             document.addEventListener("mouseup", upHandler); // `once` > ES7
         }

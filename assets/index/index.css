@@ -2,6 +2,7 @@
 @import url("../comp/resizer/resizer.css");
 @import url("../comp/editor/editor.css");
 @import url("../comp/filetree/filetree.css");
+@import url("../comp/menu/menu.css");
 
 * {
     margin: 0;

@@ -1,19 +1,19 @@
 class PathNode {
-    parent;
+    father;
     name;
-    constructor(parent, name) {
-        this.parent = parent;
+    constructor(father, name) {
+        this.father = father;
         this.name = name;
-        if (parent instanceof DirNode) {
-            parent.addChild(this);
+        if (father instanceof DirNode) {
+            father.addChild(this);
         }
     }
     rename(name) {
         this.name = name;
     }
     getFullPath() {
-        return this.parent
-            ? `${this.parent.getFullPath()}/${this.name}`
+        return this.father
+            ? `${this.father.getFullPath()}/${this.name}`
             : ".";
     }
 }
@@ -21,8 +21,8 @@ class PathNode {
 class FileNode extends PathNode {
     ext;
     content;
-    constructor(parent, name) {
-        super(parent, name);
+    constructor(father, name) {
+        super(father, name);
         this.ext = getExtName(name);
         this.content = "";
     }
@@ -34,13 +34,13 @@ class FileNode extends PathNode {
 
 class DirNode extends PathNode {
     children;
-    constructor(parent, name) {
-        super(parent, name);
+    constructor(father, name) {
+        super(father, name);
         this.children = new Array(0);
     }
     addChild(pathnode) {
         this.children.push(pathnode);
-        pathnode.parent = this;
+        pathnode.father = this;
 
         this.children.sort((childA, childB) => {
             if (childA instanceof DirNode && childB instanceof FileNode) {
@@ -52,13 +52,18 @@ class DirNode extends PathNode {
             }
         });
     }
+    deleteChild(pathnode) {
+        this.children.splice(this.children.indexOf(pathnode));
+        pathnode.father = null;
+        return pathnode;
+    }
     walkEach(callback) {
-        callback(this);
+        callback(this, this.father);
         for (const child of this.children) {
             if (child instanceof DirNode) {
                 child.walkEach(callback);
             } else {
-                callback(child);
+                callback(child, this);
             }
         }
     }
@@ -76,5 +81,40 @@ function getFileDictFromTree(node) {
 
     return dict;
 }
+function setNodeParent(father, child) {
+    child.father = father;
+    father.addChild(child);
+}
+function copyFileWithoutParent(obj) {
+    // avoid father.children->child.father->...
+    if (Array.isArray(obj)) {
+        let copy = new Array(obj.length);
+        for (let i = 0; i < obj.length; i++) {
+            copy[i] = copyFileWithoutParent(obj.at(i));
+        }
+        return copy;
+    } else if (typeof obj == "object" && obj != null) {
+        let copy = Object.create(obj);
+        copy.father = undefined;
+        for (const key in obj) {
+            if (Object.hasOwn(obj, key) && key != "father") {
+                copy[key] = copyFileWithoutParent(obj[key]);
+            }
+        }
+        return copy;
+    }
+    return obj;
+}
 
-export { DirNode, FileNode, getFileDictFromTree };
+function copyFile(pathnode) {
+    let copy = copyFileWithoutParent(pathnode);
+    if (copy instanceof DirNode) {
+        copy.walkEach((child, father) => {
+            child.father = father
+        });
+    }
+
+    return copy;
+}
+
+export { DirNode, FileNode, setNodeParent, getFileDictFromTree, copyFile };

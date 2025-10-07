@@ -1,6 +1,25 @@
 import { hljs } from "./lib/highlight.js";
 hljs.configure({ detectLanguageAutomatically: true });
 
+function deepCopy(obj) {
+    if (Array.isArray(obj)) {
+        let copy = new Array(obj.length);
+        for (let i = 0; i < obj.length; i++) {
+            copy[i] = deepCopy(obj.at(i));
+        }
+        return copy;
+    } else if (typeof obj == "object" && obj != null) {
+        let copy = Object.create(obj);
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                copy[key] = deepCopy(obj[key]);
+            }
+        }
+        return copy;
+    }
+    return obj;
+}
+
 function $(selector) {
     return document.querySelector(selector);
 }
@@ -22,4 +41,4 @@ function create(tagname, classname, id, attr = {}) {
 }
 
 export { hljs };
-export { $, $s, create };
+export { deepCopy, $, $s, create };
