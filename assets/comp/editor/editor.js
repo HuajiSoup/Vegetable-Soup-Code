@@ -1,4 +1,5 @@
 import { create, hljs, $, $s } from "../../common.js";
+import { createFinder } from "../finder/finder.js";
 
 function createEditor() {
     let editor = create("div", "editor");
@@ -14,6 +15,7 @@ function createEditor() {
     optionSplit.addEventListener("click", () => {
         splitEditor(editor, true);
     });
+    editor.onkeydown = getTextareaKeydownFunc(editor);
     
     options.appendChild(optionSplit);
     filesList.appendChild(listContainer);
@@ -74,13 +76,13 @@ function editorFocusOnFile(editor, selected) {
         setAttribute("data-focus", 1);
 }
 
-function getTextareaInputFunc(textArea, codeArea, linebar) {
+function getTextareaInputFunc(textarea, codeArea, linebar) {
     return (() => {
-        let content = textArea.value;
+        let content = textarea.value;
         let line = content.split("\n").length;
 
         // auto expand
-        textArea.setAttribute("rows", line);
+        textarea.setAttribute("rows", line);
         setLineBar(linebar, line);
 
         // highlight
@@ -88,6 +90,39 @@ function getTextareaInputFunc(textArea, codeArea, linebar) {
         codeArea.removeAttribute("data-highlighted");
         codeArea.className = "hljs";
         hljs.highlightElement(codeArea);
+    });
+}
+
+function getTextareaKeydownFunc(editor) {
+    return ((e) => {
+        if (e.ctrlKey && e.key == "s") {
+            // Ctrl + Save
+            e.preventDefault();
+            let focusTextbox = editor.querySelector(".textbox[data-focus='1']");
+            let focusTextarea = focusTextbox.querySelector("textarea");
+            let filepath = focusTextbox.getAttribute("data-filepath");
+            let file = globalThis.fileDict[filepath];
+            
+            file.content = focusTextarea.value;
+
+            // filecontent sync
+            $s(`#editor .file[data-filepath="${filepath}"]`).forEach(file => {
+                file.removeAttribute("unsaved");
+            });
+            $s(`#editor .textbox[data-filepath="${filepath}"] textarea`).forEach(textarea => {
+                textarea.value = focusTextarea.value;
+            });
+        } else if (e.ctrlKey && e.key == "f") {
+            // Ctrl + Find
+            let textarea = e.target;
+            if (textarea.tagName != "TEXTAREA") return;
+            
+            e.preventDefault();
+            textarea.closest(".code-layer").appendChild(createFinder(textarea.closest(".textbox")));
+        } else if (e.ctrlKey && e.key == "\\") {
+            e.preventDefault();
+            e.altKey ? splitEditor(editor, false) : splitEditor(editor, true);
+        }
     });
 }
 
