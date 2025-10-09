@@ -62,7 +62,6 @@ function rebuildResizer(box, horizonal = true) {
     });
     // and absolut-ify child size
     let children = Array.from(box.children);
-    console.log(children);
     let childrenSize;
     if (horizonal) {
         childrenSize = children.map(elem => elem.clientWidth);

@@ -7,14 +7,16 @@ function applyFileTree(pathnode, box, depth=0) {
         box.innerHTML = "";
     } else {
         let newDiv = create("div", "node");
-        newDiv.innerHTML = pathnode.name;
+        newDiv.innerHTML = `<p>${pathnode.name}</p>`;
         newDiv.setAttribute("data-filepath", pathnode.getFullPath());
+        newDiv.style.paddingLeft = `${12 * depth - 12}px`;
         if (pathnode instanceof DirNode) {
-            newDiv.style.paddingLeft = `${12 * depth - 12}px`;
             newDiv.setAttribute("data-open", "0");
             newDiv.insertBefore(create("span", "arrow"), newDiv.firstChild);
         } else {
-            newDiv.style.paddingLeft = `${12 * depth}px`;
+            let iconDiv = create("span", "icon");
+            iconDiv.style.backgroundImage = `url("./res/ext/${pathnode.ext}.svg")`;
+            newDiv.insertBefore(iconDiv, newDiv.firstChild);
         }
 
         box.appendChild(newDiv);

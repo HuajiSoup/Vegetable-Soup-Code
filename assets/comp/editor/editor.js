@@ -2,12 +2,16 @@ import { create, hljs, $, $s } from "../../common.js";
 import { createFinder } from "../finder/finder.js";
 import { rebuildResizer } from "../resizer/resizer.js";
 
+import { writeRootToLocal } from "../../index/index.js";
+
 function createEditor() {
     let editor = create("div", "editor");
     let filesList = create("div", "files-list");
     let listContainer = create("div", "container");
     let options = create("div", "options");
     let optionSplit = create("span", "split");
+    let splitViewLayer = create("div", "split-view");
+
     listContainer.addEventListener("click", (e) => {
         if (e.target.classList.contains("exit")) return;
         let selected = e.target.closest(".file");
@@ -16,12 +20,34 @@ function createEditor() {
     optionSplit.addEventListener("click", () => {
         splitEditor(editor, true);
     });
+    editor.ondragenter = () => {
+        splitViewLayer.style.display = "block";
+    }
+    splitViewLayer.ondragleave = () => {
+        splitViewLayer.style.display = "none";
+    }
+    splitViewLayer.ondragover = (e) => {
+        let width = editor.clientWidth;
+        let height = editor.clientHeight;
+        let offsetX = e.clientX - editor.offsetLeft;
+        let offsetY = e.clientY - editor.offsetTop;
+        console.log(offsetX);
+        
+        if (offsetX * 2 > width) {
+            splitViewLayer.setAttribute("data-pos", "right");
+        } else if (offsetY * 2 > height) {
+            splitViewLayer.setAttribute("data-pos", "bottom");
+        } else {
+            splitViewLayer.setAttribute("data-pos", "center");
+        }
+    }
     editor.onkeydown = getTextareaKeydownFunc(editor);
     
     options.appendChild(optionSplit);
     filesList.appendChild(listContainer);
     filesList.appendChild(options);
     editor.appendChild(filesList);
+    editor.appendChild(splitViewLayer);
     return editor;
 }
 
@@ -85,7 +111,7 @@ function editorFocusOnFile(editor, selected) {
         setAttribute("data-focus", 1);
 }
 
-function getTextareaInputFunc(textarea, codeArea, linebar) {
+function getTextareaInputFunc(textarea, codeArea, linebar, filebar) {
     return (() => {
         let content = textarea.value;
         let line = content.split("\n").length;
@@ -93,6 +119,9 @@ function getTextareaInputFunc(textarea, codeArea, linebar) {
         // auto expand
         textarea.setAttribute("rows", line);
         setLineBar(linebar, line);
+
+        // change to unsaved
+        filebar.setAttribute("data-unsaved", "1");
 
         // highlight
         codeArea.textContent = content;
@@ -113,10 +142,11 @@ function getTextareaKeydownFunc(editor) {
             let file = globalThis.fileDict[filepath];
             
             file.content = focusTextarea.value;
+            writeRootToLocal();
 
             // filecontent sync
             $s(`#editor .file[data-filepath="${filepath}"]`).forEach(file => {
-                file.removeAttribute("unsaved");
+                file.removeAttribute("data-unsaved");
             });
             $s(`#editor .textbox[data-filepath="${filepath}"] textarea`).forEach(textarea => {
                 textarea.value = focusTextarea.value;
@@ -163,6 +193,7 @@ function editorOpenFile(editor, filepath) {
         {
             "data-filepath" : filepath,
             "data-focus" : 0,
+            "draggable": true,
         }
     );
     let divIcon = create("span", "icon");
@@ -188,6 +219,8 @@ function editorOpenFile(editor, filepath) {
     let codePre = create("pre");
     let code = create("code");
     
+    file.ondragstart = () => {globalThis.pressing = true;}
+    file.ondragend = () => {globalThis.pressing = false;}
     divExit.addEventListener("click", () => {
         divFile.remove();
         divText.remove();
@@ -207,7 +240,7 @@ function editorOpenFile(editor, filepath) {
             editorFocusOnFile(editor, editor.querySelector(".file"));
         }
     }, { once : true });
-    let oninput = getTextareaInputFunc(textArea, code, linebar);
+    let oninput = getTextareaInputFunc(textArea, code, linebar, divFile);
     let onscroll = () => { code.scrollLeft = textArea.scrollLeft };
     textArea.oninput = oninput;
     textArea.onscroll = onscroll;

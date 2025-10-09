@@ -53,7 +53,7 @@ class DirNode extends PathNode {
         });
     }
     deleteChild(pathnode) {
-        this.children.splice(this.children.indexOf(pathnode));
+        this.children.splice(this.children.indexOf(pathnode), 1);
         pathnode.father = null;
         return pathnode;
     }

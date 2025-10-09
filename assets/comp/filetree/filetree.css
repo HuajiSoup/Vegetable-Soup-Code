@@ -21,8 +21,8 @@
     transform: rotate(0deg);
 }
 #card-filetree .node span.icon {
-    width: 12px;
-    height: 12px;
+    width: 17px;
+    height: 17px;
     background: url("../../../res/ext/txt.svg") center / cover no-repeat;
 }
 #card-filetree .node[data-open="1"] span.arrow {

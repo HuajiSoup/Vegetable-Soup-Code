@@ -38,7 +38,7 @@ function createFinder(textbox) {
 
 
 function getHighlightRanges(codearea, substr) {
-    let textNodes = getAllTextNodes(codearea).filter(node => node.textContent.length != 0);
+    let textNodes = getAllTextNodes(codearea).filter(node => node.textContent);
     let textLength = textNodes.reduce((list, cur, i) => {
         list[i] += (list[i-1] ?? 0) + cur.textContent.length;
         return list;
