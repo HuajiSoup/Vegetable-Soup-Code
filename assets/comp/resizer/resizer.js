@@ -5,9 +5,6 @@ function addResizer(elem, horizonal = true, minkeep = 0) {
     let sibling;
     if (!(sibling = elem.nextElementSibling)) return;
 
-    console.log("%o VS %o", elem, sibling);
-    
-
     let resizer = document.createElement("div");
     resizer.classList.add("resizer");
     resizer.setAttribute("data-dragging", "0");
