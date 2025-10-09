@@ -5,6 +5,9 @@ function addResizer(elem, horizonal = true, minkeep = 0) {
     let sibling;
     if (!(sibling = elem.nextElementSibling)) return;
 
+    console.log("%o VS %o", elem, sibling);
+    
+
     let resizer = document.createElement("div");
     resizer.classList.add("resizer");
     resizer.setAttribute("data-dragging", "0");
@@ -29,6 +32,7 @@ function addResizer(elem, horizonal = true, minkeep = 0) {
             let heightElem, heightSibling;
             heightElem = Math.min(e.clientY - elem.offsetTop, total);
             heightElem = (heightElem > minkeep/2) ? Math.max(heightElem, minkeep) : 0;
+            heightSibling = total - heightElem;
 
             elem.style.height = heightElem + "px";
             sibling.style.height = heightSibling + "px";
@@ -54,4 +58,30 @@ function addResizer(elem, horizonal = true, minkeep = 0) {
     elem.after(resizer);
 }
 
-export {addResizer};
+function rebuildResizer(box, horizonal = true) {
+    // this function clear all resizer in box between children
+    box.querySelectorAll(":scope > .resizer").forEach(resizer => {
+        resizer.remove();
+    });
+    // and absolut-ify child size
+    let children = Array.from(box.children);
+    console.log(children);
+    let childrenSize;
+    if (horizonal) {
+        childrenSize = children.map(elem => elem.clientWidth);
+        for (let i = 0; i < children.length; i++) {
+            children[i].style.width = childrenSize[i] + "px";
+            children[i].style.removeProperty("height");
+        }
+    } else {
+        childrenSize = children.map(elem => elem.clientHeight);
+        for (let i = 0; i < children.length; i++) {
+            children[i].style.removeProperty("width");
+            children[i].style.height = childrenSize[i] + "px";
+        }
+    }
+    // and create new resizer
+    children.forEach(elem => addResizer(elem, horizonal));
+}
+
+export {addResizer, rebuildResizer};

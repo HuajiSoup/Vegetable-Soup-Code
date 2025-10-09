@@ -1,5 +1,6 @@
 import { create, hljs, $, $s } from "../../common.js";
 import { createFinder } from "../finder/finder.js";
+import { rebuildResizer } from "../resizer/resizer.js";
 
 function createEditor() {
     let editor = create("div", "editor");
@@ -36,10 +37,14 @@ function splitEditor(dest, horizonal = true) {
 
         if (editorParent.classList.contains("hrz")) {
             dest.after(clone);
+            rebuildResizer(editorParent, true);
         } else {
             let newBox = create("div", "editor-box hrz");
+            newBox.style.height = dest.clientHeight + "px";
             newBox.appendChild(editorParent.replaceChild(newBox, dest));
             newBox.appendChild(clone);
+            rebuildResizer(editorParent, false); // parent is !horizonal
+            rebuildResizer(newBox, true);
         }
     } else {
         clone = createEditor();
@@ -48,10 +53,14 @@ function splitEditor(dest, horizonal = true) {
 
         if (editorParent.classList.contains("vtc")) {
             editorParent.appendChild(clone);
+            rebuildResizer(editorParent, false);
         } else {
             let newBox = create("div", "editor-box vtc");
+            newBox.style.width = dest.ClientWidth + "px";
             newBox.appendChild(editorParent.replaceChild(newBox, dest));
             newBox.appendChild(clone);
+            rebuildResizer(editorParent, true);
+            rebuildResizer(newBox, false);
         }
     }
 }
@@ -188,9 +197,10 @@ function editorOpenFile(editor, filepath) {
             let editorBox = editor.parentNode;
             editor.remove();
 
-            let filesLeft = editorBox.querySelectorAll(".editor").length;
-            if (filesLeft == 1) {
-                editorBox.parentNode.replaceChild(editorBox.firstChild, editorBox);
+            let filesLeft = editorBox.querySelectorAll(".editor");
+            if (filesLeft.length == 1) {
+                // if delete the last editor of a box, unpack the box;
+                editorBox.parentNode.replaceChild(filesLeft[0], editorBox);
             }
             focusOnEditor($("#editor .editor"));
         } else {
